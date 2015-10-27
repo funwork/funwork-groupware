@@ -16,7 +16,7 @@ import io.funwork.sns.domain.Sns;
 @RestController
 @RequestMapping("/sns")
 @Slf4j
-public class SnsController extends Sns {
+public class SnsController {
 
   @Autowired
   private SnsRepository snsRepository;
