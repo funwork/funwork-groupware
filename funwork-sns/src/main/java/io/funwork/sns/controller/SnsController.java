@@ -16,23 +16,20 @@ import io.funwork.sns.domain.Sns;
 @RestController
 @RequestMapping("/sns")
 @Slf4j
-public class SnsController {
+public class SnsController extends Sns {
 
   @Autowired
   private SnsRepository snsRepository;
-
   /**
    * sns list
    *
    * @return list
    */
   @RequestMapping("/list")
-  public List<Sns> list() {
-    log.debug("Test {} s", ">_<");
-    Sns sns = new Sns();
-    sns.setMemberId("urosaria");
+  public List<Sns> list(Sns sns) {
 
-    List<Sns> snsList = snsRepository.findByMemberId(sns.getMemberId());
+    sns.setStatus("A");
+    List<Sns> snsList = snsRepository.findByMemberIdAndStatus(sns.getMemberId(), sns.getStatus());
 
     return snsList;
   }
@@ -45,21 +42,10 @@ public class SnsController {
   @RequestMapping("/insert")
   public List<Sns> insert(Sns sns) {
 
-    //snsRepository.save(sns);
+    snsRepository.save(sns);
+    sns.setStatus("A");
 
-    Sns sns1 = new Sns();
-    sns1.setMemberId("urosaria");
-    sns1.setContent("test123");
-    snsRepository.save(sns1);
-
-    Sns sns2 = new Sns();
-    sns2.setMemberId("urosaria");
-    sns2.setContent("test456");
-    snsRepository.save(sns2);
-
-    sns.setMemberId("urosaria");
-
-    List<Sns> snsList = snsRepository.findByMemberId(sns.getMemberId());
+    List<Sns> snsList = snsRepository.findByMemberIdAndStatus(sns.getMemberId(), sns.getStatus());
 
     return snsList;
   }
@@ -72,16 +58,12 @@ public class SnsController {
   @RequestMapping("/update")
   public List<Sns> update(Sns sns) {
 
-    sns.setId(1);
-    sns.setContent("update~!!!");
-    sns.setMemberId("urosaria");
-
     Sns findSns = snsRepository.findOne(sns.getId());
 
     sns.setId(findSns.getId());
     snsRepository.save(sns);
 
-    List<Sns> snsList = snsRepository.findByMemberId(sns.getMemberId());
+    List<Sns> snsList = snsRepository.findByMemberIdAndStatus(sns.getMemberId(), sns.getStatus());
 
     return snsList;
   }
@@ -95,16 +77,13 @@ public class SnsController {
   @RequestMapping("/delete")
   public List<Sns> delete(Sns sns) {
 
-    sns.setId(1);
-    sns.setStatus("D");
-    sns.setMemberId("urosaria");
     snsRepository.save(sns);
+    sns.setStatus("A");
 
-    List<Sns> snsList = snsRepository.findByMemberId(sns.getMemberId());
+    List<Sns> snsList = snsRepository.findByMemberIdAndStatus(sns.getMemberId(), sns.getStatus());
 
     return snsList;
   }
-
 
 
 }

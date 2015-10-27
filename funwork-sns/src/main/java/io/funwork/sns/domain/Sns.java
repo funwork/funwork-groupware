@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Created by urosaria on 2015. 10. 23..
