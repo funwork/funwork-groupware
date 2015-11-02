@@ -28,8 +28,8 @@ public class SnsController {
   @RequestMapping("/list")
   public List<Sns> list(Sns sns) {
 
-    sns.setStatus("A");
-    List<Sns> snsList = snsRepository.findByMemberIdAndStatus(sns.getMemberId(), sns.getStatus());
+    sns.setUseYn("Y");
+    List<Sns> snsList = snsRepository.findByEmailAndUseYn(sns.getEmail(), sns.getUseYn());
 
     return snsList;
   }
@@ -43,9 +43,9 @@ public class SnsController {
   public List<Sns> insert(Sns sns) {
 
     snsRepository.save(sns);
-    sns.setStatus("A");
+    sns.setUseYn("Y");
 
-    List<Sns> snsList = snsRepository.findByMemberIdAndStatus(sns.getMemberId(), sns.getStatus());
+    List<Sns> snsList = snsRepository.findByEmailAndUseYn(sns.getEmail(), sns.getUseYn());
 
     return snsList;
   }
@@ -58,12 +58,12 @@ public class SnsController {
   @RequestMapping("/update")
   public List<Sns> update(Sns sns) {
 
-    Sns findSns = snsRepository.findOne(sns.getId());
+    Sns findSns = snsRepository.findOne(sns.getNumber());
 
-    sns.setId(findSns.getId());
+    sns.setNumber(findSns.getNumber());
     snsRepository.save(sns);
 
-    List<Sns> snsList = snsRepository.findByMemberIdAndStatus(sns.getMemberId(), sns.getStatus());
+    List<Sns> snsList = snsRepository.findByEmailAndUseYn(sns.getEmail(), sns.getUseYn());
 
     return snsList;
   }
@@ -78,9 +78,9 @@ public class SnsController {
   public List<Sns> delete(Sns sns) {
 
     snsRepository.save(sns);
-    sns.setStatus("A");
+    sns.setUseYn("Y");
 
-    List<Sns> snsList = snsRepository.findByMemberIdAndStatus(sns.getMemberId(), sns.getStatus());
+    List<Sns> snsList = snsRepository.findByEmailAndUseYn(sns.getEmail(), sns.getUseYn());
 
     return snsList;
   }
