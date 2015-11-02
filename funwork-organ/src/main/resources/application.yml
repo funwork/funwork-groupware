@@ -1,0 +1,26 @@
+spring:
+  profiles: dev
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    generate-ddl: true
+    show-sql: true
+logging:
+  level:
+    io.funwork: DEBUG
+
+
+---
+
+spring:
+  profiles: product
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    generate-ddl: false
+    show-sql: true
+logging:
+  level:
+    io.funwork: INFO
+
+---
