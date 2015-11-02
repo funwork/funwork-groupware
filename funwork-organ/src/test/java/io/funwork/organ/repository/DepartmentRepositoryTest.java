@@ -52,13 +52,13 @@ public class DepartmentRepositoryTest {
     childDepartment = departmentRepository.save(childDepartment);
 
     //when
-    parentDepartment.addChildDept(childDepartment);
     childDepartment.setParentDept(parentDepartment);
 
     //then
-    assertThat(departmentRepository.findOne(parentDepartment.getDeptCode()).getChildDept().size(), is(1));
-    assertThat(departmentRepository.findOne(childDepartment.getDeptCode()).getParentDept().getDeptName(), is(parentDepartment.getDeptName()));
+    Department newParentDepartment = departmentRepository.findOne(parentDepartment.getDeptCode());
+    Department newChildDepartment = departmentRepository.findOne(childDepartment.getDeptCode());
+
+    assertThat(newParentDepartment.getChildDept().size(), is(1));
+    assertThat(newChildDepartment.getParentDept().getDeptName(), is(parentDepartment.getDeptName()));
   }
-
-
 }
