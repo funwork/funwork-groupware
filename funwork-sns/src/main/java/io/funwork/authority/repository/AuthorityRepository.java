@@ -8,5 +8,4 @@ import io.funwork.authority.domain.Authority;
  * Created by urosaria on 2015. 11. 5..
  */
 public interface AuthorityRepository extends JpaRepository<Authority, Long> {
-
 }
