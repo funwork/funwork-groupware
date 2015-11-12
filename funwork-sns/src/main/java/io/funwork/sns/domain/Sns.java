@@ -7,9 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import io.funwork.authority.domain.Authority;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -62,5 +65,8 @@ public class Sns implements Serializable{
   @Column(name="useYn")
   private String useYn="Y";
 
+  //@OneToOne
+  //@JoinColumn(name="number")
+  //private Authority authority;
 
 }

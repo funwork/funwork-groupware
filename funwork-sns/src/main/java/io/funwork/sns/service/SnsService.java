@@ -24,8 +24,8 @@ public class SnsService {
    *
    * @param
    */
-  @ResponseBody
   public List<Sns> listSns(){
+
     return snsRepository.findAll();
   }
 
@@ -35,14 +35,13 @@ public class SnsService {
    * @param sns sns 등록 정보
    */
   @Transactional
-  @ResponseBody
-  public List<Sns> saveSns(Sns sns){
+  public Sns saveSns(Sns sns){
 
     sns = snsRepository.save(sns);
     sns.setUseYn("Y");
-    List<Sns> snsList = snsRepository.findByEmailAndUseYn(sns.getEmail(), sns.getUseYn());
+    //List<Sns> snsList = snsRepository.findByEmailAndUseYn(sns.getEmail(), sns.getUseYn());
 
-    return snsList;
+    return sns;
 
   }
 
@@ -64,7 +63,6 @@ public class SnsService {
    * @return
    */
   @Transactional
-  @ResponseBody
   public Sns updateSns(Long number, Sns sns){
 
     Sns showSns = snsRepository.findOne(number);

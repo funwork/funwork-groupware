@@ -14,6 +14,9 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
 
+import io.funwork.authority.domain.Authority;
+import io.funwork.authority.service.AuthorityService;
+import io.funwork.parsing.service.ParsingService;
 import io.funwork.sns.repository.SnsRepository;
 import io.funwork.sns.service.SnsService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +32,12 @@ public class SnsController {
 
   @Autowired
   private SnsService snsService;
+
+  @Autowired
+  private ParsingService parsingService;
+
+  @Autowired
+  private AuthorityService authorityService;
 
   /**
    * sns list (권한테이블과 조인예정 임시)
@@ -51,7 +60,25 @@ public class SnsController {
   @ResponseBody
   public List<Sns> insert(@RequestBody @Valid Sns sns) {
 
-    return snsService.saveSns(sns);
+    //sns insert
+    sns = snsService.saveSns(sns);
+
+    //auth set
+    Authority authority = new Authority();
+    authority.getSns().setNumber(sns.getNumber());
+    String authList = parsingService.listParsing(sns.getContent());
+
+    //contents -> parsing -> authList set
+    if(authList!=null){
+      authority.setAuthList(authList);
+    }
+
+    //auth insert
+    authorityService.saveAuthority(authority);
+
+    List<Sns> snsList = snsService.listSns();
+
+    return snsList;
 
   }
 

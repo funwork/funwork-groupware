@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import io.funwork.authority.domain.Authority;
 import io.funwork.authority.service.AuthorityService;
+import io.funwork.parsing.service.ParsingService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -27,6 +28,9 @@ public class AuthorityController {
   @Autowired
   private AuthorityService authorityService;
 
+  @Autowired
+  private ParsingService parsingService;
+
   /**
    * 권한 생성
    *
@@ -35,6 +39,14 @@ public class AuthorityController {
   @RequestMapping(value = "/insert/{snsNumber}", method = RequestMethod.POST)
   @ResponseBody
   public Authority createAuthority(@RequestBody @Valid Authority auth, @PathVariable Long snsNumber) {
+
+    String authList = parsingService.listParsing(auth.getSns().getContent());
+
+    //contents -> parsing -> authList set
+    if(authList!=null){
+      auth.setAuthList(authList);
+    }
+
     return authorityService.saveAuthority(auth);
   }
 

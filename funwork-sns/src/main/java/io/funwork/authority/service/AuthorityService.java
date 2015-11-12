@@ -14,9 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AuthorityService {
 
-  //@Autowired
-  //private ModelMapper modelMapper;
-
   @Autowired
   private AuthorityRepository authorityRepository;
 
