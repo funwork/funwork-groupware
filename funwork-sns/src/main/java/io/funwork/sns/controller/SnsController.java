@@ -1,12 +1,24 @@
 package io.funwork.sns.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.websocket.server.PathParam;
+
+import io.funwork.authority.domain.Authority;
+import io.funwork.authority.service.AuthorityService;
+import io.funwork.parsing.service.ParsingService;
 import io.funwork.sns.repository.SnsRepository;
+import io.funwork.sns.service.SnsService;
 import lombok.extern.slf4j.Slf4j;
 import io.funwork.sns.domain.Sns;
 
@@ -14,24 +26,29 @@ import io.funwork.sns.domain.Sns;
  * Created by urosaria on 2015. 10. 23..
  */
 @RestController
-@RequestMapping("/sns")
+@RequestMapping(value = "/sns", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 public class SnsController {
 
   @Autowired
-  private SnsRepository snsRepository;
+  private SnsService snsService;
+
+  @Autowired
+  private ParsingService parsingService;
+
+  @Autowired
+  private AuthorityService authorityService;
+
   /**
-   * sns list
+   * sns list (권한테이블과 조인예정 임시)
    *
    * @return list
    */
-  @RequestMapping("/list")
-  public List<Sns> list(Sns sns) {
+  @RequestMapping(value = "/list", method = RequestMethod.GET)
+  @ResponseBody
+  public List<Sns> list() {
 
-    sns.setStatus("A");
-    List<Sns> snsList = snsRepository.findByMemberIdAndStatus(sns.getMemberId(), sns.getStatus());
-
-    return snsList;
+    return snsService.listSns();
   }
 
   /**
@@ -39,15 +56,41 @@ public class SnsController {
    *
    * @return list
    */
-  @RequestMapping("/insert")
-  public List<Sns> insert(Sns sns) {
+  @RequestMapping(value = "/insert", method = RequestMethod.POST)
+  @ResponseBody
+  public List<Sns> insert(@RequestBody @Valid Sns sns) {
 
-    snsRepository.save(sns);
-    sns.setStatus("A");
+    //sns insert
+    sns = snsService.saveSns(sns);
 
-    List<Sns> snsList = snsRepository.findByMemberIdAndStatus(sns.getMemberId(), sns.getStatus());
+    //auth set
+    Authority authority = new Authority();
+    authority.getSns().setNumber(sns.getNumber());
+    String authList = parsingService.listParsing(sns.getContent());
+
+    //contents -> parsing -> authList set
+    if(authList!=null){
+      authority.setAuthList(authList);
+    }
+
+    //auth insert
+    authorityService.saveAuthority(authority);
+
+    List<Sns> snsList = snsService.listSns();
 
     return snsList;
+
+  }
+
+  /**
+   * sns show
+   *
+   * @return sns
+   */
+  @RequestMapping(value = "/show/{number}", method = RequestMethod.GET)
+  @ResponseBody
+  public Sns showSns(@PathVariable Long number) {
+    return snsService.showSns(number);
   }
 
   /**
@@ -55,35 +98,11 @@ public class SnsController {
    *
    * @return list
    */
-  @RequestMapping("/update")
-  public List<Sns> update(Sns sns) {
+  @RequestMapping(value = "/update/{number}", method = RequestMethod.PATCH)
+  @ResponseBody
+  public Sns update(@PathVariable Long number, @RequestBody @Valid Sns sns) {
 
-    Sns findSns = snsRepository.findOne(sns.getId());
-
-    sns.setId(findSns.getId());
-    snsRepository.save(sns);
-
-    List<Sns> snsList = snsRepository.findByMemberIdAndStatus(sns.getMemberId(), sns.getStatus());
-
-    return snsList;
+    return snsService.updateSns(number, sns);
   }
-
-
-  /**
-   * sns delete
-   *
-   * @return list
-   */
-  @RequestMapping("/delete")
-  public List<Sns> delete(Sns sns) {
-
-    snsRepository.save(sns);
-    sns.setStatus("A");
-
-    List<Sns> snsList = snsRepository.findByMemberIdAndStatus(sns.getMemberId(), sns.getStatus());
-
-    return snsList;
-  }
-
 
 }
